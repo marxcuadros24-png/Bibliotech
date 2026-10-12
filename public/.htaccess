@@ -1,0 +1,22 @@
+# Bibliotech - directorio público
+#
+# Si Apache apunta directamente aquí, cualquier URL que no corresponda a un
+# archivo o carpeta real se envía al front controller.
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # No reescribir archivos ni directorios existentes (CSS, JS, imágenes...).
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+# Sin mod_rewrite, el front controller sigue funcionando con /index.php?...
+<IfModule !mod_rewrite.c>
+    DirectoryIndex index.php
+</IfModule>
+
+# El listado de directorios queda desactivado.
+Options -Indexes

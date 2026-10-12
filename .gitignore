@@ -1,0 +1,20 @@
+# Configuración local (cada entorno tiene su propio .env)
+.env
+.env.local
+
+# Registros y caché
+storage/logs/*.log
+storage/cache/*
+!storage/logs/.gitkeep
+!storage/cache/.gitkeep
+
+# Dependencias (si más adelante se añade Composer)
+/vendor/
+composer.lock
+
+# Archivos del sistema operativo y del editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp

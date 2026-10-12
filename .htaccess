@@ -1,0 +1,20 @@
+# Bibliotech - raíz del proyecto
+#
+# El código de la aplicación (app/, config/, database/...) no debe ser accesible
+# desde el navegador. Todo se canaliza hacia la carpeta pública.
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Evita reescribir peticiones que ya van a /public.
+    RewriteCond %{REQUEST_URI} !/public/
+
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# Si mod_rewrite no está disponible, se bloquea el acceso directo.
+<IfModule !mod_rewrite.c>
+    <FilesMatch "\.(php|sql|env|md|json)$">
+        Require all denied
+    </FilesMatch>
+</IfModule>

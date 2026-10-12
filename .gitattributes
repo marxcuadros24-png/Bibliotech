@@ -1,0 +1,19 @@
+# Normaliza los finales de linea a LF dentro del repositorio, para que el
+# proyecto se vea igual sin importar el sistema operativo de quien lo clone.
+* text=auto eol=lf
+
+*.php     text
+*.css     text
+*.js      text
+*.md      text
+*.sql     text
+
+# Archivos binarios: no se tocan
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.webp  binary
+*.woff  binary
+*.woff2 binary
