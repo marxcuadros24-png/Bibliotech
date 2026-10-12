@@ -1,0 +1,414 @@
+:root {
+    --color-primario: #1f4e79;
+    --color-primario-suave: #2d6ca3;
+    --color-texto: #1d2733;
+    --color-tenue: #667587;
+    --color-borde: #dbe2ea;
+    --color-fondo: #f4f6f9;
+    --color-exito: #1e7a45;
+    --color-error: #b3261e;
+    --radio: 8px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Roboto, system-ui, sans-serif;
+    background: var(--color-fondo);
+    color: var(--color-texto);
+    line-height: 1.55;
+}
+
+.contenedor {
+    width: min(1080px, 92%);
+    margin: 0 auto;
+}
+
+/* Encabezado ------------------------------------------------------------- */
+.cabecera {
+    background: var(--color-primario);
+    color: #fff;
+}
+
+.cabecera__interior {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem 0;
+    flex-wrap: wrap;
+}
+
+.marca {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.15rem;
+}
+
+.marca__icono {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radio);
+    background: #fff;
+    color: var(--color-primario);
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
+}
+
+.nav {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.nav__enlace {
+    color: #dbe8f5;
+    text-decoration: none;
+    padding: 0.4rem 0.85rem;
+    border-radius: var(--radio);
+    font-size: 0.92rem;
+}
+
+.nav__enlace:hover {
+    background: var(--color-primario-suave);
+    color: #fff;
+}
+
+.nav__enlace.activo {
+    background: #fff;
+    color: var(--color-primario);
+    font-weight: 600;
+}
+
+/* Contenido -------------------------------------------------------------- */
+.contenido {
+    padding: 1.75rem 0 3rem;
+}
+
+.encabezado-seccion {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+}
+
+h1 {
+    font-size: 1.6rem;
+    margin: 0 0 0.25rem;
+}
+
+h2 {
+    font-size: 1.15rem;
+    margin: 0 0 0.75rem;
+}
+
+.subtitulo {
+    color: var(--color-tenue);
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+.tarjeta {
+    background: #fff;
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio);
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+}
+
+/* Avisos ----------------------------------------------------------------- */
+.aviso {
+    padding: 0.7rem 1rem;
+    border-radius: var(--radio);
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    font-size: 0.93rem;
+}
+
+.aviso--exito {
+    background: #e7f5ec;
+    border-color: #b7e0c6;
+    color: var(--color-exito);
+}
+
+.aviso--error {
+    background: #fdecea;
+    border-color: #f5c2c0;
+    color: var(--color-error);
+}
+
+/* Indicadores ------------------------------------------------------------ */
+.indicadores {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.indicador {
+    background: #fff;
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio);
+    padding: 1.1rem 1.25rem;
+}
+
+.indicador__valor {
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: var(--color-primario);
+    line-height: 1.1;
+}
+
+.indicador__etiqueta {
+    color: var(--color-tenue);
+    font-size: 0.87rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* Tablas ----------------------------------------------------------------- */
+.tabla-envoltura {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    font-size: 0.94rem;
+}
+
+th, td {
+    text-align: left;
+    padding: 0.7rem 0.9rem;
+    border-bottom: 1px solid var(--color-borde);
+    vertical-align: middle;
+}
+
+th {
+    background: #eef2f7;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-tenue);
+}
+
+tbody tr:hover {
+    background: #f8fafc;
+}
+
+/* Formularios ------------------------------------------------------------ */
+.campo {
+    margin-bottom: 1rem;
+}
+
+.campo label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+}
+
+.campo input[type="text"],
+.campo input[type="number"],
+.campo input[type="url"],
+.campo select,
+.campo textarea {
+    width: 100%;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio);
+    font-family: inherit;
+    font-size: 0.95rem;
+    background: #fff;
+}
+
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus {
+    outline: 2px solid var(--color-primario-suave);
+    outline-offset: 1px;
+    border-color: var(--color-primario-suave);
+}
+
+.campo textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+.campo--error input,
+.campo--error select,
+.campo--error textarea {
+    border-color: var(--color-error);
+}
+
+.campo__error {
+    display: block;
+    color: var(--color-error);
+    font-size: 0.83rem;
+    margin-top: 0.25rem;
+}
+
+.campo__ayuda {
+    display: block;
+    color: var(--color-tenue);
+    font-size: 0.83rem;
+    margin-top: 0.25rem;
+}
+
+.fila-campos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.acciones-formulario {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    margin-top: 0.5rem;
+    flex-wrap: wrap;
+}
+
+/* Botones ---------------------------------------------------------------- */
+.boton {
+    display: inline-block;
+    padding: 0.55rem 1.1rem;
+    border-radius: var(--radio);
+    border: 1px solid var(--color-primario);
+    background: var(--color-primario);
+    color: #fff;
+    font-size: 0.92rem;
+    font-family: inherit;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.boton:hover {
+    background: var(--color-primario-suave);
+    border-color: var(--color-primario-suave);
+}
+
+.boton--secundario {
+    background: #fff;
+    color: var(--color-primario);
+}
+
+.boton--secundario:hover {
+    background: #eef2f7;
+    color: var(--color-primario);
+}
+
+.boton--peligro {
+    background: #fff;
+    color: var(--color-error);
+    border-color: #f0b3af;
+}
+
+.boton--peligro:hover {
+    background: #fdecea;
+    border-color: var(--color-error);
+}
+
+.boton--pequeno {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.85rem;
+}
+
+.en-linea {
+    display: inline;
+}
+
+/* Búsqueda --------------------------------------------------------------- */
+.buscador {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.buscador input[type="text"] {
+    min-width: 240px;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio);
+    font-family: inherit;
+}
+
+/* Varios ----------------------------------------------------------------- */
+.etiqueta {
+    display: inline-block;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    background: #eef2f7;
+    color: var(--color-tenue);
+    border: 1px solid var(--color-borde);
+}
+
+.etiqueta--agotado {
+    background: #fdecea;
+    color: var(--color-error);
+    border-color: #f5c2c0;
+}
+
+.etiqueta--disponible {
+    background: #e7f5ec;
+    color: var(--color-exito);
+    border-color: #b7e0c6;
+}
+
+.detalle-lista {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 0.5rem 1rem;
+    margin: 0;
+}
+
+.detalle-lista dt {
+    color: var(--color-tenue);
+    font-size: 0.88rem;
+}
+
+.detalle-lista dd {
+    margin: 0;
+}
+
+.vacio {
+    padding: 2rem 1rem;
+    text-align: center;
+    color: var(--color-tenue);
+    background: #fff;
+    border: 1px dashed var(--color-borde);
+    border-radius: var(--radio);
+}
+
+.pie {
+    padding: 1.5rem 0;
+    color: var(--color-tenue);
+    font-size: 0.85rem;
+    text-align: center;
+    border-top: 1px solid var(--color-borde);
+}
+
+@media (max-width: 600px) {
+    .detalle-lista {
+        grid-template-columns: 1fr;
+    }
+
+    .detalle-lista dt {
+        font-weight: 600;
+        margin-top: 0.5rem;
+    }
+}
