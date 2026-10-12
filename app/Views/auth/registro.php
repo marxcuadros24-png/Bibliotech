@@ -29,7 +29,7 @@
 
     <div class="<?= errores('password') === [] ? 'campo' : 'campo campo--error' ?>">
         <label for="password">Contraseña</label>
-        <input type="password" id="password" name="password"
+        <input type="password" id="password" name="password" minlength="8"
                autocomplete="new-password" required>
         <span class="campo__ayuda">Mínimo 8 caracteres.</span>
         <?php foreach (errores('password') as $mensaje): ?>
@@ -40,7 +40,7 @@
     <div class="<?= errores('password_confirmacion') === [] ? 'campo' : 'campo campo--error' ?>">
         <label for="password_confirmacion">Repetir contraseña</label>
         <input type="password" id="password_confirmacion" name="password_confirmacion"
-               autocomplete="new-password" required>
+               minlength="8" autocomplete="new-password" required>
         <?php foreach (errores('password_confirmacion') as $mensaje): ?>
             <span class="campo__error"><?= e($mensaje) ?></span>
         <?php endforeach; ?>

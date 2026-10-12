@@ -7,8 +7,8 @@
 
     <div class="<?= errores('email') === [] ? 'campo' : 'campo campo--error' ?>">
         <label for="email">Correo electrónico</label>
-        <input type="text" id="email" name="email" autocomplete="username"
-               value="<?= e(old('email')) ?>" autofocus required>
+        <input type="email" id="email" name="email" maxlength="180"
+               autocomplete="username" value="<?= e(old('email')) ?>" autofocus required>
         <?php foreach (errores('email') as $mensaje): ?>
             <span class="campo__error"><?= e($mensaje) ?></span>
         <?php endforeach; ?>
