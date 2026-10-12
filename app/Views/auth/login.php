@@ -24,4 +24,8 @@
     </div>
 
     <button class="boton boton--bloque" type="submit">Entrar</button>
+
+    <p class="acceso__pie">
+        ¿No tienes cuenta? <a href="<?= e(url('registro')) ?>">Regístrate</a>
+    </p>
 </form>

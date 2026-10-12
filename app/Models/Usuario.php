@@ -5,10 +5,27 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Core\Model;
+use RuntimeException;
 
 class Usuario extends Model
 {
     public const ROLES = ['administrador', 'bibliotecario', 'estudiante'];
+
+    /**
+     * Rol que reciben las cuentas creadas desde el formulario público.
+     *
+     * Es una constante y no un valor de configuración a propósito: si el rol
+     * saliera del formulario, cualquiera podría registrarse como administrador.
+     */
+    public const ROL_PUBLICO = 'estudiante';
+
+    /**
+     * Hash de descarte para cuando el correo no existe.
+     *
+     * password_verify() se ejecuta igual, así el tiempo de respuesta no delata
+     * qué correos están registrados.
+     */
+    private const HASH_SENUELO = '$2y$10$usuarioinexistentesoloParagastartiempodeVerificacion00';
 
     protected string $table = 'usuarios';
     protected string $primaryKey = 'id';
@@ -59,6 +76,57 @@ class Usuario extends Model
         $this->db->prepare($sql)->execute($datos);
 
         return (int) $this->db->lastInsertId();
+    }
+
+    /**
+     * Registra una cuenta desde el formulario público.
+     *
+     * A diferencia de crear(), aquí el rol NO se toma de $datos: se fuerza al
+     * rol público. Nombre y correo son los únicos campos que el visitante elige.
+     *
+     * @param array{nombre?: string, email?: string} $datos
+     *
+     * @throws RuntimeException si el correo ya está tomado.
+     */
+    public function registrar(array $datos, string $password): int
+    {
+        $email = mb_strtolower(trim((string) ($datos['email'] ?? '')));
+
+        if ($this->emailDuplicado($email)) {
+            throw new RuntimeException('Ya existe una cuenta con ese correo.');
+        }
+
+        return $this->crear([
+            'nombre' => trim((string) ($datos['nombre'] ?? '')),
+            'email'  => $email,
+            'rol'    => self::ROL_PUBLICO,
+            'estado' => 'activo',
+        ], $password);
+    }
+
+    /**
+     * Comprueba unas credenciales y devuelve el usuario si son correctas.
+     *
+     * Devuelve null tanto si la contraseña no coincide como si la cuenta no
+     * existe o está bloqueada: quien llama no debe poder distinguir esos casos.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function validarLogin(string $email, string $password): ?array
+    {
+        $usuario = $this->porEmail(mb_strtolower(trim($email)));
+
+        $hash = is_array($usuario) ? (string) $usuario['password_hash'] : self::HASH_SENUELO;
+
+        if (!password_verify($password, $hash)) {
+            return null;
+        }
+
+        if ($usuario === null || $usuario['estado'] !== 'activo') {
+            return null;
+        }
+
+        return $usuario;
     }
 
     /**

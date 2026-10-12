@@ -31,21 +31,17 @@ class Auth
     public static function intentar(string $email, string $password): bool
     {
         $modelo = new Usuario();
-        $usuario = $modelo->porEmail($email);
 
-        $hash = $usuario['password_hash'] ?? '$2y$10$invalidinvalidinvalidinvalidinvalidinvalidinvalidinvalidinva';
+        // La verificación del hash vive en el modelo, así la regla es una sola
+        // y no se puede desincronizar entre el login y el registro.
+        $usuario = $modelo->validarLogin($email, $password);
 
-        if (!password_verify($password, $hash)) {
-            return false;
-        }
-
-        // Cuenta inexistente o bloqueada: mismo resultado para el usuario.
-        if ($usuario === null || $usuario['estado'] !== 'activo') {
+        if ($usuario === null) {
             return false;
         }
 
         // Si el algoritmo de hash quedó desactualizado, se renueva en el momento.
-        if (password_needs_rehash($usuario['password_hash'], PASSWORD_DEFAULT)) {
+        if (password_needs_rehash((string) $usuario['password_hash'], PASSWORD_DEFAULT)) {
             $modelo->cambiarPassword((int) $usuario['id'], $password);
         }
 

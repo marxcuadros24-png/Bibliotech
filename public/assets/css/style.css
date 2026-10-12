@@ -534,6 +534,19 @@ tbody tr:hover {
     margin-top: 1.25rem;
 }
 
+.acceso__pie {
+    margin: 1.25rem 0 0;
+    text-align: center;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: var(--color-tenue);
+}
+
+.acceso__pie a {
+    color: var(--color-primario);
+    font-weight: 600;
+}
+
 /* Selector dentro de los buscadores ------------------------------------- */
 .buscador select {
     padding: 0.5rem 0.7rem;

@@ -7,9 +7,13 @@ namespace App\Controllers;
 use App\Core\Auth;
 use App\Core\Controller;
 use App\Core\Session;
+use App\Models\Usuario;
+use RuntimeException;
 
 class AuthController extends Controller
 {
+    private const CLAVE_MINIMA = 8;
+
     // -----------------------------------------------------------------------
     // GET /login
     // -----------------------------------------------------------------------
@@ -59,6 +63,84 @@ class AuthController extends Controller
         Session::flash('_old', ['email' => $email]);
 
         $this->redirect('login');
+    }
+
+    // -----------------------------------------------------------------------
+    // GET /registro
+    // -----------------------------------------------------------------------
+    public function mostrarRegistro(): void
+    {
+        $this->view('auth.registro', ['title' => 'Crear cuenta'], 'auth');
+    }
+
+    // -----------------------------------------------------------------------
+    // POST /registro
+    // -----------------------------------------------------------------------
+    public function registrar(): void
+    {
+        $this->protegerCsrf();
+
+        $nombre = $this->request->string('nombre');
+        $email = mb_strtolower($this->request->string('email'));
+        $password = (string) $this->request->post('password', '');
+        $confirmacion = (string) $this->request->post('password_confirmacion', '');
+
+        $errores = [];
+
+        if ($nombre === '') {
+            $errores['nombre'][] = 'El nombre es obligatorio.';
+        } elseif (mb_strlen($nombre) > 120) {
+            $errores['nombre'][] = 'El nombre no puede superar los 120 caracteres.';
+        }
+
+        if ($email === '') {
+            $errores['email'][] = 'El correo es obligatorio.';
+        } elseif (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+            $errores['email'][] = 'Escribe un correo válido.';
+        } elseif (mb_strlen($email) > 180) {
+            $errores['email'][] = 'El correo no puede superar los 180 caracteres.';
+        }
+
+        if ($password === '') {
+            $errores['password'][] = 'La contraseña es obligatoria.';
+        } elseif (mb_strlen($password) < self::CLAVE_MINIMA) {
+            $errores['password'][] = 'Mínimo ' . self::CLAVE_MINIMA . ' caracteres.';
+        } elseif ($password !== $confirmacion) {
+            $errores['password_confirmacion'][] = 'Las contraseñas no coinciden.';
+        }
+
+        if ($errores !== []) {
+            Session::flash('_errors', $errores);
+            Session::flash('_old', ['nombre' => $nombre, 'email' => $email]);
+
+            $this->redirect('registro');
+        }
+
+        $usuarios = new Usuario();
+
+        try {
+            // Solo se pasan nombre y correo: el rol lo decide el modelo.
+            $id = $usuarios->registrar(['nombre' => $nombre, 'email' => $email], $password);
+        } catch (RuntimeException $e) {
+            Session::flash('_errors', ['email' => [$e->getMessage()]]);
+            Session::flash('_old', ['nombre' => $nombre, 'email' => $email]);
+
+            $this->redirect('registro');
+        }
+
+        // Se abre la sesión de una vez para no obligar a escribir las
+        // credenciales otra vez justo después de crearlas.
+        $creado = $usuarios->find($id);
+
+        if ($creado !== null) {
+            Auth::abrirSesion($creado);
+        }
+
+        Session::flash('_messages', [
+            'exito' => 'Tu cuenta se creó correctamente. ¡Bienvenido, ' . $nombre . '!',
+        ]);
+
+        $this->redirect(Auth::destinoInicial());
     }
 
     // -----------------------------------------------------------------------

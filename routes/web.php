@@ -26,6 +26,13 @@ declare(strict_types=1);
 // ---------------------------------------------------------------------------
 $router->get('/login', 'AuthController@mostrarLogin', ['invitado']);
 $router->post('/login', 'AuthController@login', ['invitado']);
+
+// Registro público: cualquiera puede crear una cuenta, pero siempre con el rol
+// estudiante. El filtro 'invitado' impide que un usuario con sesión cree cuentas
+// a través de este formulario.
+$router->get('/registro', 'AuthController@mostrarRegistro', ['invitado']);
+$router->post('/registro', 'AuthController@registrar', ['invitado']);
+
 $router->post('/logout', 'AuthController@logout', ['auth']);
 
 // ---------------------------------------------------------------------------
