@@ -90,6 +90,24 @@ class Libro extends Model
         return $fila === false ? null : $fila;
     }
 
+    /**
+     * Libros con al menos un ejemplar en estantería.
+     *
+     * Es lo que alimenta el selector del formulario de préstamo: no tiene
+     * sentido ofrecer títulos que no se pueden entregar.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function disponibles(): array
+    {
+        return $this->db->query(
+            'SELECT id, titulo, autor, isbn, stock_disponible, stock_total
+             FROM libros
+             WHERE stock_disponible > 0
+             ORDER BY titulo ASC'
+        )->fetchAll();
+    }
+
     /** Suma de ejemplares registrados en todo el catálogo. */
     public function totalEjemplares(): int
     {
