@@ -223,6 +223,9 @@ tbody tr:hover {
 .campo input[type="text"],
 .campo input[type="number"],
 .campo input[type="url"],
+.campo input[type="email"],
+.campo input[type="date"],
+.campo input[type="password"],
 .campo select,
 .campo textarea {
     width: 100%;
@@ -402,6 +405,145 @@ tbody tr:hover {
     border-top: 1px solid var(--color-borde);
 }
 
+/* Sesión en la cabecera ------------------------------------------------- */
+.sesion {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.sesion__datos {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+    text-align: right;
+}
+
+.sesion__nombre {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.sesion__rol {
+    font-size: 0.75rem;
+    color: #b9d2ea;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.boton--sesion {
+    background: transparent;
+    border-color: #6f9dc6;
+    color: #fff;
+}
+
+.boton--sesion:hover {
+    background: var(--color-primario-suave);
+    border-color: #fff;
+}
+
+/* Acciones dentro de una celda ------------------------------------------ */
+.acciones-fila {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+}
+
+.acciones-fila form {
+    margin: 0;
+}
+
+/* Indicadores en alerta ------------------------------------------------- */
+.indicador--alerta {
+    border-color: #f0b3af;
+    background: #fdf3f2;
+}
+
+.indicador--alerta .indicador__valor {
+    color: var(--color-error);
+}
+
+/* Dos tarjetas lado a lado ---------------------------------------------- */
+.rejilla-dos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.25rem;
+    align-items: start;
+}
+
+/* Aviso informativo ----------------------------------------------------- */
+.aviso--info {
+    background: #eaf2fb;
+    border-color: #c3d9f0;
+    color: var(--color-primario);
+}
+
+/* Filas atenuadas (cuentas bloqueadas) ---------------------------------- */
+.fila-atenuada td {
+    opacity: 0.6;
+}
+
+/* Pantalla de acceso ---------------------------------------------------- */
+.cuerpo-acceso {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(140deg, var(--color-primario), #3d7fb5);
+    padding: 2rem 1rem;
+}
+
+.acceso {
+    width: min(420px, 100%);
+}
+
+.acceso__marca {
+    text-align: center;
+    color: #fff;
+    margin-bottom: 1.5rem;
+}
+
+.acceso__marca .marca__icono {
+    background: #fff;
+    color: var(--color-primario);
+    height: 46px;
+    width: 46px;
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.acceso__titulo {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.acceso__marca .subtitulo {
+    color: #dbe8f5;
+    margin-top: 0.25rem;
+}
+
+.formulario-acceso {
+    margin-bottom: 0;
+}
+
+.boton--bloque {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-top: 1.25rem;
+}
+
+/* Selector dentro de los buscadores ------------------------------------- */
+.buscador select {
+    padding: 0.5rem 0.7rem;
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio);
+    font-family: inherit;
+    font-size: 0.95rem;
+    background: #fff;
+}
+
 @media (max-width: 600px) {
     .detalle-lista {
         grid-template-columns: 1fr;
@@ -410,5 +552,9 @@ tbody tr:hover {
     .detalle-lista dt {
         font-weight: 600;
         margin-top: 0.5rem;
+    }
+
+    .sesion__datos {
+        display: none;
     }
 }

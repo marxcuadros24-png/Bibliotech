@@ -142,3 +142,63 @@ if (!function_exists('activo')) {
         return str_contains($path, $prefijo) ? 'activo' : '';
     }
 }
+
+if (!function_exists('puede')) {
+    /** Atajo para consultar permisos desde las vistas. */
+    function puede(string $modulo, string $accion): bool
+    {
+        return App\Core\Auth::puede($modulo, $accion);
+    }
+}
+
+if (!function_exists('moneda')) {
+    /** Formatea un importe con el símbolo configurado en config/biblioteca.php. */
+    function moneda(float|int|string|null $monto): string
+    {
+        $simbolo = (string) App\Core\App::config('biblioteca.moneda', 'S/');
+
+        return $simbolo . ' ' . number_format((float) $monto, 2);
+    }
+}
+
+if (!function_exists('fecha')) {
+    /** Fecha legible; devuelve un guion si viene vacía. */
+    function fecha(?string $valor, string $formato = 'd/m/Y'): string
+    {
+        if ($valor === null || $valor === '' || str_starts_with($valor, '0000')) {
+            return '—';
+        }
+
+        $marca = strtotime($valor);
+
+        return $marca === false ? '—' : date($formato, $marca);
+    }
+}
+
+if (!function_exists('nombre_estado')) {
+    /** Traduce los estados de préstamos y multas a texto legible. */
+    function nombre_estado(string $estado): string
+    {
+        return [
+            'activo'     => 'Activo',
+            'devuelto'   => 'Devuelto',
+            'vencido'    => 'Vencido',
+            'cancelado'  => 'Cancelado',
+            'pendiente'  => 'Pendiente',
+            'pagada'     => 'Pagada',
+            'condonada'  => 'Condonada',
+        ][$estado] ?? ucfirst($estado);
+    }
+}
+
+if (!function_exists('clase_estado')) {
+    /** Clase CSS que colorea la etiqueta según el estado. */
+    function clase_estado(string $estado): string
+    {
+        return match ($estado) {
+            'activo', 'pagada'    => 'etiqueta--disponible',
+            'vencido', 'pendiente' => 'etiqueta--agotado',
+            default               => '',
+        };
+    }
+}
