@@ -15,22 +15,26 @@ class Router
     /** @var array<string, list<array{pattern:string, action:string, uri:string}>> */
     private array $routes = [];
 
-    public function get(string $uri, string $action): self
+    /** @param list<string> $middleware */
+    public function get(string $uri, string $action, array $middleware = []): self
     {
-        return $this->add('GET', $uri, $action);
+        return $this->add('GET', $uri, $action, $middleware);
     }
 
-    public function post(string $uri, string $action): self
+    /** @param list<string> $middleware */
+    public function post(string $uri, string $action, array $middleware = []): self
     {
-        return $this->add('POST', $uri, $action);
+        return $this->add('POST', $uri, $action, $middleware);
     }
 
-    public function add(string $method, string $uri, string $action): self
+    /** @param list<string> $middleware */
+    public function add(string $method, string $uri, string $action, array $middleware = []): self
     {
         $this->routes[strtoupper($method)][] = [
-            'pattern' => $this->toPattern($uri),
-            'action'  => $action,
-            'uri'     => '/' . trim($uri, '/'),
+            'pattern'    => $this->toPattern($uri),
+            'action'     => $action,
+            'uri'        => '/' . trim($uri, '/'),
+            'middleware' => $middleware,
         ];
 
         return $this;
@@ -50,7 +54,7 @@ class Router
 
             $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
 
-            $this->invoke($route['action'], $params, $request);
+            $this->invoke($route, $params, $request);
 
             return;
         }
@@ -88,13 +92,17 @@ class Router
     }
 
     /**
-     * Instancia el controlador y ejecuta la acción indicada ("Clase@metodo").
+     * Ejecuta los filtros de la ruta, instancia el controlador y llama a la
+     * acción indicada ("Clase@metodo").
      *
+     * @param array{pattern:string, action:string, uri:string, middleware:list<string>} $route
      * @param array<string, string> $params
      */
-    private function invoke(string $action, array $params, Request $request): void
+    private function invoke(array $route, array $params, Request $request): void
     {
-        [$controller, $method] = array_pad(explode('@', $action, 2), 2, 'index');
+        Middleware::procesar($route['middleware'], $request);
+
+        [$controller, $method] = array_pad(explode('@', $route['action'], 2), 2, 'index');
 
         $class = str_contains($controller, '\\')
             ? $controller

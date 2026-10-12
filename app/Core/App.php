@@ -23,7 +23,7 @@ class App
 
         /** @var array<string, mixed> $config */
         $config = require BASE_PATH . '/config/app.php';
-        self::$config = $config;
+        self::$config['app'] = $config;
 
         date_default_timezone_set((string) ($config['timezone'] ?? 'UTC'));
 
@@ -39,10 +39,32 @@ class App
         self::registerExceptionHandler($config);
     }
 
-    /** Lee un valor de config/app.php. */
-    public static function config(string $key, mixed $default = null): mixed
+    /**
+     * Lee un valor de configuración con notación de punto: "app.debug" o
+     * "biblioteca.dias_prestamo". El archivo se carga la primera vez que se
+     * pide, así que agregar uno nuevo en config/ no requiere tocar el núcleo.
+     */
+    public static function config(string $clave, mixed $default = null): mixed
     {
-        return self::$config[$key] ?? $default;
+        [$archivo, $subclave] = array_pad(explode('.', $clave, 2), 2, '');
+
+        if (!array_key_exists($archivo, self::$config)) {
+            $ruta = BASE_PATH . "/config/{$archivo}.php";
+
+            if (!is_file($ruta)) {
+                return $default;
+            }
+
+            self::$config[$archivo] = require $ruta;
+        }
+
+        $valor = self::$config[$archivo];
+
+        if ($subclave === '') {
+            return $valor;
+        }
+
+        return is_array($valor) ? ($valor[$subclave] ?? $default) : $default;
     }
 
     public static function run(): void
