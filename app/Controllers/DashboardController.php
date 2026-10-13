@@ -38,6 +38,43 @@ class DashboardController extends Controller
         $this->panelPersonal($prestamos, $multas);
     }
 
+    // -----------------------------------------------------------------------
+    // GET /reporte (ruta con el filtro 'rol:administrador')
+    // -----------------------------------------------------------------------
+
+    /**
+     * Reporte general de la biblioteca: conteos totales para el administrador.
+     *
+     * Se separa del panel de inicio (que es lo que ve cada rol al entrar) para
+     * que este resumen quede restringido a los administradores sin quitarles a
+     * los estudiantes su propio panel.
+     */
+    public function reporte(): void
+    {
+        // Defensa en profundidad: la ruta ya exige el rol, pero si algún día se
+        // registrara sin el filtro, el reporte seguiría siendo solo del admin.
+        if (!Auth::es('administrador')) {
+            $this->abort(403, 'Solo un administrador puede ver el reporte general.');
+        }
+
+        $prestamos = new Prestamo();
+        $multas = new Multa();
+
+        // Mantiene al día los préstamos vencidos antes de contarlos.
+        $prestamos->sincronizarVencidos();
+
+        $resumenMultas = $multas->resumen();
+
+        $this->view('dashboard', [
+            'title'            => 'Reporte general',
+            'totalLibros'      => (new Libro())->count(),
+            'totalUsuarios'    => (new Usuario())->count(),
+            'prestamosActivos' => $prestamos->contarPorEstado()['activo'],
+            'multasPendientes' => $resumenMultas['pendiente']['cantidad'],
+            'montoPendiente'   => $resumenMultas['pendiente']['total'],
+        ]);
+    }
+
     private function panelPersonal(Prestamo $prestamos, Multa $multas): void
     {
         $libros = new Libro();

@@ -60,12 +60,15 @@ class PrestamoController extends Controller
     public function create(): void
     {
         $this->view('prestamos.create', [
-            'title'             => 'Registrar préstamo',
-            'libros'            => (new Libro())->disponibles(),
-            'usuarios'          => (new Usuario())->activos(),
-            'diasPorDefecto'    => (int) App::config('biblioteca.dias_prestamo', 7),
-            'fechaSugerida'     => date('Y-m-d', strtotime('+' . (int) App::config('biblioteca.dias_prestamo', 7) . ' days')),
+            'title'           => 'Registrar préstamo',
+            'libros'          => (new Libro())->disponibles(),
+            'usuarios'        => (new Usuario())->activos(),
+            'diasPorDefecto'  => (int) App::config('biblioteca.dias_prestamo', 7),
+            'fechaSugerida'   => date('Y-m-d', strtotime('+' . (int) App::config('biblioteca.dias_prestamo', 7) . ' days')),
+            // Permiten llegar con el usuario o el libro ya elegidos, por ejemplo
+            // desde el botón "Prestar" del catálogo (?libro=5).
             'idUsuarioSugerido' => $this->request->integer('id_usuario'),
+            'idLibroSugerido'   => $this->request->integer('libro'),
         ]);
     }
 

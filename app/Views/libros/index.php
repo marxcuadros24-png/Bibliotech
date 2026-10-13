@@ -2,9 +2,17 @@
 /**
  * Catálogo de libros.
  *
+ * La columna de acciones se arma con los permisos del rol: un estudiante solo
+ * consulta, así que no ve botones que le responderían 403 (cada ruta vuelve a
+ * validar sus permisos; esto solo evita ofrecer algo inaccesible).
+ *
  * @var list<array<string, mixed>> $libros
  * @var string $busqueda
  */
+$puedePrestar = puede('prestamos', 'crear');
+$puedeEditar = puede('libros', 'editar');
+$puedeEliminar = puede('libros', 'eliminar');
+$mostrarAcciones = $puedePrestar || $puedeEditar || $puedeEliminar;
 ?>
 <div class="encabezado-seccion">
     <div>
@@ -14,7 +22,9 @@
             <?= $busqueda !== '' ? ' para «' . e($busqueda) . '»' : '' ?>
         </p>
     </div>
-    <a class="boton" href="<?= e(url('libros/crear')) ?>">Registrar libro</a>
+    <?php if (puede('libros', 'crear')): ?>
+        <a class="boton" href="<?= e(url('libros/crear')) ?>">Registrar libro</a>
+    <?php endif; ?>
 </div>
 
 <div class="tarjeta">
@@ -45,11 +55,14 @@
                     <th>Editorial</th>
                     <th>Año</th>
                     <th>Stock</th>
-                    <th>Acciones</th>
+                    <?php if ($mostrarAcciones): ?>
+                        <th>Acciones</th>
+                    <?php endif; ?>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach ($libros as $libro): ?>
+                    <?php $disponibles = (int) $libro['stock_disponible']; ?>
                     <tr>
                         <td>
                             <a href="<?= e(url('libros/' . $libro['id'])) ?>"><?= e($libro['titulo']) ?></a>
@@ -59,7 +72,7 @@
                         <td><?= $libro['editorial'] !== null ? e($libro['editorial']) : '—' ?></td>
                         <td><?= $libro['anio'] !== null ? e($libro['anio']) : '—' ?></td>
                         <td>
-                            <?php if ((int) $libro['stock_disponible'] === 0): ?>
+                            <?php if ($disponibles === 0): ?>
                                 <span class="etiqueta etiqueta--agotado">Sin ejemplares</span>
                             <?php else: ?>
                                 <span class="etiqueta etiqueta--disponible">
@@ -67,10 +80,31 @@
                                 </span>
                             <?php endif; ?>
                         </td>
-                        <td>
-                            <a class="boton boton--secundario boton--pequeno"
-                               href="<?= e(url('libros/' . $libro['id'] . '/editar')) ?>">Editar</a>
-                        </td>
+
+                        <?php if ($mostrarAcciones): ?>
+                            <td>
+                                <div class="acciones-fila">
+                                    <?php if ($puedePrestar && $disponibles > 0): ?>
+                                        <a class="boton boton--pequeno"
+                                           href="<?= e(url('prestamos/crear?libro=' . $libro['id'])) ?>">Prestar</a>
+                                    <?php endif; ?>
+
+                                    <?php if ($puedeEditar): ?>
+                                        <a class="boton boton--secundario boton--pequeno"
+                                           href="<?= e(url('libros/' . $libro['id'] . '/editar')) ?>">Editar</a>
+                                    <?php endif; ?>
+
+                                    <?php if ($puedeEliminar): ?>
+                                        <form method="POST"
+                                              action="<?= e(url('libros/' . $libro['id'] . '/eliminar')) ?>"
+                                              onsubmit="return confirm('¿Eliminar «<?= e($libro['titulo']) ?>» del catálogo?');">
+                                            <?= csrf_field() ?>
+                                            <button class="boton boton--peligro boton--pequeno" type="submit">Eliminar</button>
+                                        </form>
+                                    <?php endif; ?>
+                                </div>
+                            </td>
+                        <?php endif; ?>
                     </tr>
                 <?php endforeach; ?>
             </tbody>

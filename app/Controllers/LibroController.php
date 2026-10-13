@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Core\Auth;
 use App\Core\Controller;
 use App\Core\Request;
 use App\Core\Session;
@@ -12,6 +13,14 @@ use App\Models\Libro;
 
 class LibroController extends Controller
 {
+    /**
+     * Roles autorizados a modificar el inventario.
+     *
+     * Coinciden con las claves de config/permisos.php para el módulo 'libros';
+     * el estudiante solo puede consultar el catálogo.
+     */
+    private const ROLES_GESTION = ['administrador', 'bibliotecario'];
+
     private Libro $libros;
 
     public function __construct(Request $request)
@@ -57,6 +66,8 @@ class LibroController extends Controller
     // -----------------------------------------------------------------------
     public function create(): void
     {
+        $this->exigirRolDeGestion();
+
         $this->view('libros.create', [
             'title'      => 'Registrar libro',
             'libro'      => $this->libroVacio(),
@@ -71,6 +82,7 @@ class LibroController extends Controller
     // -----------------------------------------------------------------------
     public function store(): void
     {
+        $this->exigirRolDeGestion();
         $this->protegerCsrf();
 
         $resultado = $this->validar();
@@ -91,6 +103,8 @@ class LibroController extends Controller
     // -----------------------------------------------------------------------
     public function edit(int $id): void
     {
+        $this->exigirRolDeGestion();
+
         $libro = $this->libros->find($id);
 
         if ($libro === null) {
@@ -111,6 +125,7 @@ class LibroController extends Controller
     // -----------------------------------------------------------------------
     public function update(int $id): void
     {
+        $this->exigirRolDeGestion();
         $this->protegerCsrf();
 
         if (!$this->libros->exists($id)) {
@@ -135,6 +150,7 @@ class LibroController extends Controller
     // -----------------------------------------------------------------------
     public function destroy(int $id): void
     {
+        $this->exigirRolDeGestion();
         $this->protegerCsrf();
 
         if (!$this->libros->exists($id)) {
@@ -162,6 +178,22 @@ class LibroController extends Controller
     // -----------------------------------------------------------------------
     // Apoyo interno
     // -----------------------------------------------------------------------
+
+    /**
+     * Exige que la sesión corresponda a un Admin o Bibliotecario.
+     *
+     * La ruta ya aplica 'permiso:libros,crear|editar|eliminar' (ver
+     * config/permisos.php), pero se vuelve a comprobar aquí como defensa en
+     * profundidad: si alguna vez se registrara la acción sin el filtro, el
+     * inventario seguiría protegido. Auth lee el usuario de la $_SESSION
+     * ('_usuario') y confirma que la cuenta siga activa.
+     */
+    private function exigirRolDeGestion(): void
+    {
+        if (!Auth::es(...self::ROLES_GESTION)) {
+            $this->abort(403, 'Solo Admin y Bibliotecario pueden gestionar el inventario de libros.');
+        }
+    }
 
     /** @return array<string, mixed> */
     private function libroVacio(): array

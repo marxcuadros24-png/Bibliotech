@@ -21,8 +21,6 @@ class UsuarioController extends Controller
 {
     private const CLAVE_MINIMA = 8;
 
-    private const ESTADOS = ['activo', 'bloqueado'];
-
     private Usuario $usuarios;
 
     public function __construct(Request $request)
@@ -35,10 +33,18 @@ class UsuarioController extends Controller
     // GET /usuarios
     public function index(): void
     {
+        $busqueda = $this->request->string('buscar');
+        $rol = $this->request->string('rol');
+        $estado = $this->request->string('estado');
+
         $this->view('usuarios.index', [
             'title'    => 'Usuarios',
-            'usuarios' => $this->usuarios->conTotalPrestamos(),
+            // El modelo descarta los valores de rol o estado que no existan.
+            'usuarios' => $this->usuarios->conTotalPrestamos($busqueda, $rol, $estado),
             'roles'    => $this->usuarios->contarPorRol(),
+            'busqueda' => $busqueda,
+            'rol'      => $rol,
+            'estado'   => $estado,
         ]);
     }
 
@@ -54,7 +60,7 @@ class UsuarioController extends Controller
             'accion'      => url('usuarios'),
             'metodo'      => 'crear',
             'rolesValidos' => Usuario::ROLES,
-            'estados'     => self::ESTADOS,
+            'estados'     => Usuario::ESTADOS,
         ]);
     }
 
@@ -102,7 +108,7 @@ class UsuarioController extends Controller
             'accion'       => url("usuarios/{$id}"),
             'metodo'       => 'editar',
             'rolesValidos' => Usuario::ROLES,
-            'estados'      => self::ESTADOS,
+            'estados'      => Usuario::ESTADOS,
         ]);
     }
 
@@ -243,7 +249,7 @@ class UsuarioController extends Controller
             $errores['rol'][] = 'Selecciona un rol válido.';
         }
 
-        if (!in_array($estado, self::ESTADOS, true)) {
+        if (!in_array($estado, Usuario::ESTADOS, true)) {
             $errores['estado'][] = 'Selecciona un estado válido.';
         }
 

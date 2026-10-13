@@ -5,6 +5,7 @@
  * @var int $diasPorDefecto
  * @var string $fechaSugerida
  * @var int $idUsuarioSugerido
+ * @var int $idLibroSugerido
  */
 ?>
 <div class="encabezado-seccion">
@@ -57,7 +58,7 @@
                     <option value="">Selecciona un libro…</option>
                     <?php foreach ($libros as $libro): ?>
                         <option value="<?= e($libro['id']) ?>"
-                            <?= (string) old('id_libro') === (string) $libro['id'] ? 'selected' : '' ?>>
+                            <?= (string) old('id_libro', (string) $idLibroSugerido) === (string) $libro['id'] ? 'selected' : '' ?>>
                             <?= e($libro['titulo']) ?> — <?= e($libro['autor']) ?>
                             (<?= e($libro['stock_disponible']) ?> disponible(s))
                         </option>

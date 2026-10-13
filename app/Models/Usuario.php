@@ -11,6 +11,9 @@ class Usuario extends Model
 {
     public const ROLES = ['administrador', 'bibliotecario', 'estudiante'];
 
+    /** Estados posibles de una cuenta. La comparten el controlador y los filtros. */
+    public const ESTADOS = ['activo', 'bloqueado'];
+
     /**
      * Rol que reciben las cuentas creadas desde el formulario público.
      *
@@ -193,17 +196,54 @@ class Usuario extends Model
         )->fetchAll();
     }
 
-    /** Usuarios con su cantidad de préstamos vigentes. */
-    public function conTotalPrestamos(): array
+    /**
+     * Usuarios con su cantidad de préstamos vigentes, opcionalmente filtrados.
+     *
+     * El texto busca en nombre y correo; los valores de rol y estado se ignoran
+     * si no son válidos, para que un filtro manipulado en la URL no rompa la
+     * consulta. Todo va con marcadores nombrados: lo que escribe el usuario
+     * nunca se concatena en el SQL.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function conTotalPrestamos(string $busqueda = '', string $rol = '', string $estado = ''): array
     {
-        return $this->db->query(
+        $condiciones = [];
+        $parametros = [];
+
+        if ($busqueda !== '') {
+            // Dos marcadores distintos con el mismo valor: MySQL no permite
+            // reutilizar un marcador nombrado en la misma sentencia.
+            $condiciones[] = '(u.nombre LIKE :busquedaNombre OR u.email LIKE :busquedaCorreo)';
+            $parametros['busquedaNombre'] = '%' . $busqueda . '%';
+            $parametros['busquedaCorreo'] = '%' . $busqueda . '%';
+        }
+
+        if (in_array($rol, self::ROLES, true)) {
+            $condiciones[] = 'u.rol = :rol';
+            $parametros['rol'] = $rol;
+        }
+
+        if (in_array($estado, self::ESTADOS, true)) {
+            $condiciones[] = 'u.estado = :estado';
+            $parametros['estado'] = $estado;
+        }
+
+        // $condiciones solo contiene fragmentos fijos, nunca datos del usuario.
+        $where = $condiciones === [] ? '' : 'WHERE ' . implode(' AND ', $condiciones);
+
+        $stmt = $this->db->prepare(
             "SELECT u.id, u.nombre, u.email, u.rol, u.estado, u.created_at,
                     COUNT(p.id) AS prestamos_activos
              FROM usuarios u
              LEFT JOIN prestamos p ON p.id_usuario = u.id AND p.estado IN ('activo', 'vencido')
+             {$where}
              GROUP BY u.id, u.nombre, u.email, u.rol, u.estado, u.created_at
              ORDER BY u.nombre ASC"
-        )->fetchAll();
+        );
+        $stmt->execute($parametros);
+
+        return $stmt->fetchAll();
     }
 
     /** Cuántos préstamos tiene el usuario (para saber si se puede eliminar). */

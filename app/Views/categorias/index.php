@@ -1,5 +1,7 @@
 <?php
 /**
+ * Columnas: nombre, descripción, cuántos libros la usan y acciones.
+ *
  * @var list<array<string, mixed>> $categorias
  */
 ?>
@@ -23,7 +25,6 @@
                     <th>Nombre</th>
                     <th>Descripción</th>
                     <th>Libros</th>
-                    <th>Creada</th>
                     <?php if (puede('categorias', 'editar')): ?>
                         <th>Acciones</th>
                     <?php endif; ?>
@@ -41,8 +42,6 @@
                                 <?= e((int) $categoria['total_libros']) ?>
                             </a>
                         </td>
-                        <td><?= e(fecha($categoria['created_at'])) ?></td>
-
                         <?php if (puede('categorias', 'editar')): ?>
                             <td>
                                 <div class="acciones-fila">
