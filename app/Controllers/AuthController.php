@@ -154,6 +154,9 @@ class AuthController extends Controller
 
         Session::flash('_messages', ['exito' => 'Cerraste sesión correctamente.']);
 
-        $this->redirect('login');
+        // Al cerrar sesión se vuelve a la portada pública ('/'), no al formulario
+        // de acceso: el visitante ya no tiene sesión y la portada se muestra a
+        // cualquiera, así que es el destino natural para un usuario público.
+        $this->redirect('');
     }
 }

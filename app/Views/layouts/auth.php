@@ -2,6 +2,10 @@
 /**
  * Layout reducido para el login: sin navegación, porque todavía no hay sesión.
  *
+ * Aun así deja un enlace de vuelta a la portada ("← Volver al inicio"), para que
+ * un visitante anónimo no quede encerrado en el formulario: la portada pública
+ * en '/' siempre está a un clic.
+ *
  * @var string      $title
  * @var string      $content
  */
@@ -35,6 +39,10 @@ $error = mensaje_flash('error');
         <?php endif; ?>
 
         <?= $content ?>
+
+        <p class="acceso__pie">
+            <a href="<?= e(url()) ?>">← Volver al inicio</a>
+        </p>
     </main>
 </body>
 </html>

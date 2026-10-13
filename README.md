@@ -92,8 +92,10 @@ controlador responde 403 aunque adivine el folio en la URL.
 
 | Módulo | Rutas principales |
 |---|---|
-| Autenticación | `GET/POST /login`, `POST /logout` |
-| Dashboard | `GET /` (el contenido cambia según el rol) |
+| Autenticación | `GET/POST /login`, `GET/POST /registro`, `POST /logout` |
+| Inicio | `GET /` (portada pública) |
+| Catálogo público | `GET /catalogo` (visible sin sesión) |
+| Dashboard | `GET /panel` (el contenido cambia según el rol) |
 | Libros (CRUD) | `/libros`, `/libros/crear`, `/libros/{id}`, `/libros/{id}/editar` |
 | Categorías (CRUD) | `/categorias`, `/categorias/crear`, `/categorias/{id}/editar` |
 | Usuarios (CRUD) | `/usuarios`, `/usuarios/crear`, `/usuarios/{id}/editar` |
@@ -143,6 +145,23 @@ listar préstamos o al abrir una ficha, sin necesidad de un cron.
   impide); se ofrece bloquearlo en su lugar.
 - No se puede quitar el rol de administrador, bloquear ni eliminar al **último
   administrador activo**, para no dejar el sistema sin quien gestione cuentas.
+
+## Interfaz
+
+Toda la piel del sistema vive en `public/assets/css/style.css`: las vistas solo
+usan clases (`.tarjeta`, `.boton`, `.indicador`, `.etiqueta`…), así que un cambio
+de diseño se hace en un único archivo.
+
+- **Paleta**: fondo crema `#FDFBF2`, cabecera morado vino `#6B1C52`, acción
+  principal mostaza `#D59B34` y tarjetas blancas.
+- **Layouts** (`app/Views/layouts/`): `publico.php` (portada y catálogo, con o sin
+  sesión), `auth.php` (acceso, con enlace de vuelta a la portada) y `main.php`
+  (área con sesión: cabecera superior fija con el logo a la izquierda y el menú
+  lateral en tarjeta, con los enlaces que el rol puede ver).
+- **Componentes**: botones tipo píldora, tarjetas con sombra ligera, métricas con
+  el número grande (morado, o mostaza para importes) y tablas sin líneas
+  verticales con *badges* de estado (verde suave para `activo`, `devuelto` o
+  `pagada`; rojo suave para `vencido` y `pendiente`).
 
 ## Estructura del proyecto
 

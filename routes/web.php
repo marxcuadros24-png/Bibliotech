@@ -36,9 +36,22 @@ $router->post('/registro', 'AuthController@registrar', ['invitado']);
 $router->post('/logout', 'AuthController@logout', ['auth']);
 
 // ---------------------------------------------------------------------------
+// Inicio: portada pública, la ve cualquier visitante (con o sin sesión)
+// ---------------------------------------------------------------------------
+$router->get('/', 'InicioController@index');
+
+// ---------------------------------------------------------------------------
 // Panel
 // ---------------------------------------------------------------------------
-$router->get('/', 'DashboardController@index', ['auth']);
+$router->get('/panel', 'DashboardController@index', ['auth']);
+
+// Reporte general: solo el administrador. El controlador lo vuelve a comprobar.
+$router->get('/reporte', 'DashboardController@reporte', ['rol:administrador']);
+
+// ---------------------------------------------------------------------------
+// Catálogo público: sin filtros, lo ve cualquier visitante (con o sin sesión)
+// ---------------------------------------------------------------------------
+$router->get('/catalogo', 'CatalogoPublicoController@index');
 
 // ---------------------------------------------------------------------------
 // Libros: el catálogo lo ve cualquier rol autenticado, el CRUD solo el personal

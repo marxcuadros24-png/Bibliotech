@@ -171,11 +171,12 @@ class Auth
 
     /**
      * Página de destino tras iniciar sesión. El panel ya adapta su contenido
-     * al rol, así que todos entran por el mismo sitio.
+     * al rol, así que todos entran por el mismo sitio. La portada pública vive
+     * en '/', por lo que el destino por defecto es el panel.
      */
     public static function destinoInicial(): string
     {
-        return '';
+        return 'panel';
     }
 
     /** @return array<string, array<string, list<string>>> */
