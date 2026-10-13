@@ -49,7 +49,7 @@
             <div class="indicador__valor"><?= e($prestamos['vencido']) ?></div>
             <div class="indicador__etiqueta">Préstamos vencidos</div>
         </div>
-        <div class="indicador indicador--alerta">
+        <div class="indicador indicador--acento">
             <div class="indicador__valor"><?= e(moneda($multas['pendiente']['total'])) ?></div>
             <div class="indicador__etiqueta">
                 Multas por cobrar (<?= e($multas['pendiente']['cantidad']) ?>)
@@ -169,7 +169,7 @@
             <div class="indicador__valor"><?= e(count($misPrestamos)) ?></div>
             <div class="indicador__etiqueta">Préstamos vigentes</div>
         </div>
-        <div class="indicador <?= $totalPendiente > 0 ? 'indicador--alerta' : '' ?>">
+        <div class="indicador <?= $totalPendiente > 0 ? 'indicador--acento' : '' ?>">
             <div class="indicador__valor"><?= e(moneda($totalPendiente)) ?></div>
             <div class="indicador__etiqueta">Multas por pagar</div>
         </div>

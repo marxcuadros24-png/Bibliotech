@@ -195,10 +195,12 @@ if (!function_exists('clase_estado')) {
     /** Clase CSS que colorea la etiqueta según el estado. */
     function clase_estado(string $estado): string
     {
+        // Verde: lo que está en orden (activo, devuelto, pagada, condonada).
+        // Rojo: lo que reclama atención (vencido, pendiente).
         return match ($estado) {
-            'activo', 'pagada'    => 'etiqueta--disponible',
-            'vencido', 'pendiente' => 'etiqueta--agotado',
-            default               => '',
+            'activo', 'devuelto', 'pagada', 'condonada' => 'etiqueta--disponible',
+            'vencido', 'pendiente'                       => 'etiqueta--agotado',
+            default                                      => '',
         };
     }
 }
